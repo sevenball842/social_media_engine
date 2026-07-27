@@ -21,10 +21,9 @@ google-auth-oauthlib==1.0.0
 # Content generation & AI
 anthropic==0.7.1
 
-# Web dashboard (optional)
+# Web dashboard (REQUIRED)
 flask==2.3.2
 flask-cors==4.0.0
-flask-restful==0.3.10
 
 # Database (optional)
 sqlalchemy==2.0.19

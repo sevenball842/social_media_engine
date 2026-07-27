@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Engine - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🚀 Social Media Engine</h1>
+                <p>Autonomous Campaign Manager</p>
+            </div>
+            <div class="header-status">
+                <span class="live-indicator"></span>
+                <span id="live-time">--:--</span>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button class="nav-btn active" data-tab="overview">📊 Overview</button>
+            <button class="nav-btn" data-tab="industries">🏢 Industries</button>
+            <button class="nav-btn" data-tab="approvals">✅ Approvals</button>
+            <button class="nav-btn" data-tab="scheduling">📅 Scheduling</button>
+            <button class="nav-btn" data-tab="performance">📈 Performance</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Overview Tab -->
+            <section id="overview-tab" class="tab-content active">
+                <div class="section">
+                    <h2>System Status</h2>
+                    <div class="status-grid">
+                        <div class="status-card">
+                            <div class="status-value" id="industries-total">-</div>
+                            <div class="status-label">Industries Tracked</div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-value" id="status-changes">-</div>
+                            <div class="status-label">Status Changes</div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-value" id="pending-approvals">-</div>
+                            <div class="status-label">Pending Approvals</div>
+                        </div>
+                        <div class="status-card">
+                            <div class="status-value" id="queued-posts">-</div>
+                            <div class="status-label">Queued Posts</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Summary -->
+                <div class="section">
+                    <h2>Industry Status Distribution</h2>
+                    <div class="status-summary">
+                        <div class="status-box green">
+                            <div class="status-count" id="count-green">0</div>
+                            <div class="status-name">🟢 GREEN</div>
+                        </div>
+                        <div class="status-box yellow">
+                            <div class="status-count" id="count-yellow">0</div>
+                            <div class="status-name">🟡 YELLOW</div>
+                        </div>
+                        <div class="status-box orange">
+                            <div class="status-count" id="count-orange">0</div>
+                            <div class="status-name">🟠 ORANGE</div>
+                        </div>
+                        <div class="status-box red">
+                            <div class="status-count" id="count-red">0</div>
+                            <div class="status-name">🔴 RED</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Changes -->
+                <div class="section">
+                    <h2>Recent Status Changes</h2>
+                    <div id="recent-changes" class="changes-list">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Industries Tab -->
+            <section id="industries-tab" class="tab-content">
+                <div class="section">
+                    <h2>All Industries</h2>
+                    <table class="industries-table">
+                        <thead>
+                            <tr>
+                                <th>Industry</th>
+                                <th>Status</th>
+                                <th>% Change</th>
+                                <th>Revenue</th>
+                                <th>Units Sold</th>
+                                <th>Product</th>
+                            </tr>
+                        </thead>
+                        <tbody id="industries-tbody">
+                            <tr><td colspan="6" class="loading">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Approvals Tab -->
+            <section id="approvals-tab" class="tab-content">
+                <div class="section">
+                    <h2>Pending Approvals</h2>
+                    <div id="approvals-list" class="approvals-list">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scheduling Tab -->
+            <section id="scheduling-tab" class="tab-content">
+                <div class="section">
+                    <h2>Scheduled Posts</h2>
+                    <div id="platform-tabs" class="platform-tabs">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div id="scheduled-list" class="scheduled-list">
+                        <p class="loading">Loading...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Tab -->
+            <section id="performance-tab" class="tab-content">
+                <div class="section">
+                    <h2>Performance Metrics</h2>
+                    <div class="performance-grid">
+                        <div class="perf-card">
+                            <div class="perf-label">Total Posts</div>
+                            <div class="perf-value" id="perf-posts">-</div>
+                        </div>
+                        <div class="perf-card">
+                            <div class="perf-label">Total Engagement</div>
+                            <div class="perf-value" id="perf-engagement">-</div>
+                        </div>
+                        <div class="perf-card">
+                            <div class="perf-label">Total Reach</div>
+                            <div class="perf-value" id="perf-reach">-</div>
+                        </div>
+                        <div class="perf-card">
+                            <div class="perf-label">Avg Engagement Rate</div>
+                            <div class="perf-value" id="perf-rate">-</div>
+                        </div>
+                    </div>
+
+                    <h3>By Platform</h3>
+                    <table class="performance-table">
+                        <thead>
+                            <tr>
+                                <th>Platform</th>
+                                <th>Posts</th>
+                                <th>Engagement</th>
+                                <th>Reach</th>
+                            </tr>
+                        </thead>
+                        <tbody id="platform-perf-tbody">
+                            <tr><td colspan="4" class="loading">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Social Media Engine v1.0 | Auto-refresh every 30s</p>
+        </footer>
+    </div>
+
+    <!-- Approval Modal -->
+    <div id="approval-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Approve/Reject Pivot</h2>
+            <div id="modal-industry" class="modal-info"></div>
+            <textarea id="modal-notes" placeholder="Add notes..." rows="4"></textarea>
+            <div class="modal-buttons">
+                <button id="approve-btn" class="btn btn-approve">✅ Approve</button>
+                <button id="reject-btn" class="btn btn-reject">❌ Reject</button>
+                <button id="cancel-btn" class="btn btn-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
