@@ -1,0 +1,42 @@
+# Social Media Engine Dependencies
+
+# Core
+python-dotenv==1.0.0
+requests==2.31.0
+PyGithub==2.1.1
+
+# Data handling
+pandas==2.0.3
+openpyxl==3.1.2
+
+# API clients
+linkedin-api==2.0.0
+tweepy==4.14.0
+instagrapi==2.0.0
+python-facebook-api==3.0.0
+TikTokApi==0.2.0
+google-auth==2.22.0
+google-auth-oauthlib==1.0.0
+
+# Content generation & AI
+anthropic==0.7.1
+
+# Web dashboard (optional)
+flask==2.3.2
+flask-cors==4.0.0
+flask-restful==0.3.10
+
+# Database (optional)
+sqlalchemy==2.0.19
+psycopg2-binary==2.9.7
+
+# Utilities
+pydantic==2.1.1
+pyyaml==6.0
+click==8.1.6
+
+# Development
+pytest==7.4.0
+black==23.7.0
+flake8==6.0.0
+mypy==1.4.1

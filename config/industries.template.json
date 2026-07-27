@@ -1,0 +1,73 @@
+{
+  "industries": [
+    {
+      "id": "tech",
+      "name": "Technology",
+      "description": "Software, SaaS, cloud services",
+      "status": "GREEN",
+      "last_status_change": null,
+      "tracking": true
+    },
+    {
+      "id": "healthcare",
+      "name": "Healthcare",
+      "description": "Medical, pharmaceutical, wellness",
+      "status": "GREEN",
+      "last_status_change": null,
+      "tracking": true
+    },
+    {
+      "id": "finance",
+      "name": "Finance",
+      "description": "Banking, fintech, investment",
+      "status": "YELLOW",
+      "last_status_change": "2026-Q2",
+      "tracking": true
+    },
+    {
+      "id": "ecommerce",
+      "name": "E-Commerce",
+      "description": "Retail, online shopping, marketplace",
+      "status": "ORANGE",
+      "last_status_change": "2026-Q1",
+      "tracking": true
+    },
+    {
+      "id": "education",
+      "name": "Education",
+      "description": "EdTech, training, learning platforms",
+      "status": "GREEN",
+      "last_status_change": null,
+      "tracking": true
+    },
+    {
+      "id": "enterprise",
+      "name": "Enterprise",
+      "description": "B2B, enterprise software, services",
+      "status": "GREEN",
+      "last_status_change": null,
+      "tracking": true
+    },
+    {
+      "id": "startup",
+      "name": "Startup",
+      "description": "Early-stage, seed-funded companies",
+      "status": "YELLOW",
+      "last_status_change": "2026-Q2",
+      "tracking": true
+    },
+    {
+      "id": "nonprofit",
+      "name": "Nonprofit",
+      "description": "NGO, charitable organizations",
+      "status": "GREEN",
+      "last_status_change": null,
+      "tracking": true
+    }
+  ],
+  "metadata": {
+    "total_industries": 8,
+    "last_updated": "2026-07-27",
+    "last_sync": "2026-07-27T19:30:00Z"
+  }
+}

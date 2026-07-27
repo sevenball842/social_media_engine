@@ -1,0 +1,98 @@
+{
+  "metadata": {
+    "quarter": "Q3",
+    "year": 2026,
+    "period": "2026-07-01 to 2026-09-30",
+    "submitted_by": "Tim",
+    "submitted_date": "2026-10-01",
+    "company": "WeGen LLC"
+  },
+  "industries": {
+    "tech": {
+      "previous_quarter_revenue": 450000,
+      "current_quarter_revenue": 425000,
+      "percent_change": -5.56,
+      "status": "YELLOW",
+      "units_sold": 1200,
+      "primary_product": "Web Scanning Tool",
+      "notes": "Slight decline in tech sector inquiries, increased competition"
+    },
+    "healthcare": {
+      "previous_quarter_revenue": 320000,
+      "current_quarter_revenue": 345000,
+      "percent_change": 7.81,
+      "status": "GREEN",
+      "units_sold": 890,
+      "primary_product": "Compliance Scanner",
+      "notes": "Strong growth in healthcare compliance demand"
+    },
+    "finance": {
+      "previous_quarter_revenue": 280000,
+      "current_quarter_revenue": 238000,
+      "percent_change": -15.0,
+      "status": "ORANGE",
+      "units_sold": 650,
+      "primary_product": "Regulatory Compliance Tool",
+      "notes": "Market consolidation affecting mid-market clients"
+    },
+    "ecommerce": {
+      "previous_quarter_revenue": 210000,
+      "current_quarter_revenue": 155000,
+      "percent_change": -26.19,
+      "status": "RED",
+      "units_sold": 380,
+      "primary_product": "E-Commerce Compliance Scanner",
+      "notes": "Significant shift to larger platforms, smaller vendors consolidating"
+    },
+    "education": {
+      "previous_quarter_revenue": 175000,
+      "current_quarter_revenue": 185000,
+      "percent_change": 5.71,
+      "status": "GREEN",
+      "units_sold": 520,
+      "primary_product": "Educational Compliance Tool",
+      "notes": "Consistent growth from EdTech adoption"
+    },
+    "enterprise": {
+      "previous_quarter_revenue": 560000,
+      "current_quarter_revenue": 598000,
+      "percent_change": 6.79,
+      "status": "GREEN",
+      "units_sold": 1450,
+      "primary_product": "Enterprise Web Scanner",
+      "notes": "Strong enterprise adoption, increased budgets"
+    },
+    "startup": {
+      "previous_quarter_revenue": 95000,
+      "current_quarter_revenue": 85000,
+      "percent_change": -10.53,
+      "status": "YELLOW",
+      "units_sold": 210,
+      "primary_product": "Startup Compliance Package",
+      "notes": "Funding environment slower, reduced new startup launches"
+    },
+    "nonprofit": {
+      "previous_quarter_revenue": 65000,
+      "current_quarter_revenue": 72000,
+      "percent_change": 10.77,
+      "status": "GREEN",
+      "units_sold": 140,
+      "primary_product": "Nonprofit Compliance Scanner",
+      "notes": "Grant funding supporting compliance initiatives"
+    }
+  },
+  "summary": {
+    "total_revenue_previous": 2155000,
+    "total_revenue_current": 2103000,
+    "total_percent_change": -2.41,
+    "industries_up": 4,
+    "industries_down": 4,
+    "status_changes": 3,
+    "key_insights": [
+      "E-commerce experiencing significant headwinds (-26%)",
+      "Enterprise and healthcare showing strong growth",
+      "Startup and finance sectors require campaign pivot",
+      "Education and nonprofit growing steadily"
+    ]
+  }
+}

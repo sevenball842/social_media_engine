@@ -1,0 +1,103 @@
+{
+  "system": {
+    "name": "Social Media Engine",
+    "owner": "Tim",
+    "environment": "production",
+    "debug": false
+  },
+  "api_keys": {
+    "github": "YOUR_GITHUB_TOKEN",
+    "linkedin": "YOUR_LINKEDIN_API_KEY",
+    "twitter": "YOUR_TWITTER_API_KEY",
+    "instagram": "YOUR_INSTAGRAM_API_KEY",
+    "facebook": "YOUR_FACEBOOK_API_KEY",
+    "tiktok": "YOUR_TIKTOK_API_KEY",
+    "youtube": "YOUR_YOUTUBE_API_KEY",
+    "claude_api": "YOUR_CLAUDE_API_KEY"
+  },
+  "status_thresholds": {
+    "description": "Percentage change thresholds for status levels",
+    "green_to_yellow": -5,
+    "yellow_to_orange": -15,
+    "orange_to_red": -25,
+    "yellow_to_green": 5,
+    "orange_to_yellow": 15,
+    "red_to_orange": 25
+  },
+  "external_repo": {
+    "description": "External repository to scan for existing schedule/materials",
+    "enabled": true,
+    "repo_url": "https://github.com/your-org/your-schedule-repo",
+    "branch": "main",
+    "schedule_path": "schedules/content_schedule.json",
+    "materials_path": "materials/",
+    "sync_frequency": "weekly"
+  },
+  "posting_cadence": {
+    "linkedin": {
+      "frequency": "daily",
+      "best_time": "09:00",
+      "timezone": "UTC",
+      "posts_per_week": 5
+    },
+    "twitter": {
+      "frequency": "daily",
+      "best_time": "14:00",
+      "timezone": "UTC",
+      "posts_per_week": 7
+    },
+    "instagram": {
+      "frequency": "daily",
+      "best_time": "11:00",
+      "timezone": "UTC",
+      "posts_per_week": 5
+    },
+    "facebook": {
+      "frequency": "daily",
+      "best_time": "10:00",
+      "timezone": "UTC",
+      "posts_per_week": 3
+    },
+    "tiktok": {
+      "frequency": "daily",
+      "best_time": "18:00",
+      "timezone": "UTC",
+      "posts_per_week": 5
+    },
+    "youtube": {
+      "frequency": "weekly",
+      "best_time": "12:00",
+      "timezone": "UTC",
+      "posts_per_week": 1
+    }
+  },
+  "approval_workflow": {
+    "enabled": true,
+    "require_approval_before_posting": true,
+    "approver_email": "tim@example.com",
+    "approval_notification": "email",
+    "approval_queue_path": "data/approval_queue/",
+    "auto_expire_pending_days": 7
+  },
+  "performance_tracking": {
+    "enabled": true,
+    "track_engagement": true,
+    "track_reach": true,
+    "track_impressions": true,
+    "generate_reports": true,
+    "report_frequency": "weekly"
+  },
+  "dashboard": {
+    "enabled": true,
+    "port": 5000,
+    "host": "localhost",
+    "refresh_interval_seconds": 60,
+    "show_status_by_industry": true,
+    "show_performance_metrics": true
+  },
+  "data_retention": {
+    "keep_historical_days": 365,
+    "archive_old_schedules": true,
+    "cleanup_frequency": "monthly"
+  }
+}
