@@ -17,8 +17,11 @@ class ContentManager:
         "template": [".pptx", ".xlsx", ".html"],
     }
 
-    def __init__(self, library_dir: str = "data/content_library/"):
+    def __init__(self, library_dir: str = None):
         """Initialize content manager"""
+        if library_dir is None:
+            # Use portable location relative to app
+            library_dir = os.path.join(os.getcwd(), "data", "content_library")
         self.library_dir = library_dir
         self.metadata_file = os.path.join(library_dir, "library_manifest.json")
         os.makedirs(library_dir, exist_ok=True)

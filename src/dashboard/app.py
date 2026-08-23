@@ -7,6 +7,16 @@ from datetime import datetime, timedelta
 import sys
 from pathlib import Path
 
+# Determine if running as executable or script
+if getattr(sys, 'frozen', False):
+    # Running as PyInstaller executable
+    app_dir = sys._MEIPASS
+    base_dir = os.path.dirname(sys.executable)
+else:
+    # Running as script
+    app_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = str(Path(__file__).parent.parent.parent)
+
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
