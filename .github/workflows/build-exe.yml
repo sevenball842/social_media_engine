@@ -1,0 +1,64 @@
+name: Build Windows Executable
+
+on:
+  push:
+    branches:
+      - claude/social-media-engine-6zcvkb
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+
+    - name: Build executable
+      run: python build_exe.py
+
+    - name: Upload to Release
+      uses: actions/upload-artifact@v3
+      with:
+        name: SocialMediaEngine
+        path: dist/SocialMediaEngine.exe
+
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: latest-build-${{ github.run_number }}
+        release_name: Social Media Engine ${{ github.run_number }}
+        body: |
+          🎉 Latest build of Social Media Engine
+
+          **Download:** SocialMediaEngine.exe
+
+          **How to use:**
+          1. Download SocialMediaEngine.exe
+          2. Double-click to run
+          3. Browser opens automatically
+
+          That's it! No installation needed.
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/SocialMediaEngine.exe
+        asset_name: SocialMediaEngine.exe
+        asset_content_type: application/octet-stream
