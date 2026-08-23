@@ -221,6 +221,8 @@
                     <!-- Library Search & Stats -->
                     <div class="library-section">
                         <h3>📚 Your Materials</h3>
+
+                        <!-- Search and Filters -->
                         <div class="library-controls">
                             <input type="text" id="library-search" placeholder="Search materials..." />
                             <select id="library-filter-category">
@@ -230,6 +232,30 @@
                                 <option value="document">Document</option>
                                 <option value="template">Template</option>
                             </select>
+                            <select id="library-filter-industry">
+                                <option value="">All Industries</option>
+                            </select>
+                        </div>
+
+                        <!-- Sort and View Options -->
+                        <div class="library-toolbar">
+                            <div class="sort-controls">
+                                <label>Sort by:</label>
+                                <select id="library-sort">
+                                    <option value="date-desc">📅 Newest First</option>
+                                    <option value="date-asc">📅 Oldest First</option>
+                                    <option value="name-asc">A-Z Name</option>
+                                    <option value="name-desc">Z-A Name</option>
+                                    <option value="size-desc">💾 Largest First</option>
+                                    <option value="size-asc">💾 Smallest First</option>
+                                </select>
+                            </div>
+                            <div class="view-controls">
+                                <label>View:</label>
+                                <button class="view-btn active" data-view="list" title="List view">☰ List</button>
+                                <button class="view-btn" data-view="grid-small" title="Small icons">⊟ Small</button>
+                                <button class="view-btn" data-view="grid-large" title="Large icons">⊞ Large</button>
+                            </div>
                         </div>
 
                         <!-- Library Stats -->
@@ -261,48 +287,150 @@
                 <div class="section">
                     <h2>Content Creator</h2>
 
-                    <!-- Content Creation Form -->
-                    <div class="creator-section">
-                        <h3>✏️ Create New Campaign Content</h3>
-                        <div class="creator-form">
-                            <div class="form-group">
-                                <label>Campaign Name:</label>
-                                <input type="text" id="creator-campaign-name" placeholder="e.g., Q4 Marketing Push" />
-                            </div>
-                            <div class="form-row">
+                    <!-- Creator Tabs -->
+                    <div class="creator-tabs">
+                        <button class="creator-tab-btn active" data-creator-tab="text">📝 Text & Posts</button>
+                        <button class="creator-tab-btn" data-creator-tab="image">🖼️ Image Creator</button>
+                        <button class="creator-tab-btn" data-creator-tab="video">🎬 Video Presentation</button>
+                    </div>
+
+                    <!-- Text & Posts Content -->
+                    <div id="creator-text-tab" class="creator-tab-content active">
+                        <div class="creator-section">
+                            <h3>✏️ Create Campaign Content</h3>
+                            <div class="creator-form">
                                 <div class="form-group">
-                                    <label>Target Industry:</label>
-                                    <input type="text" id="creator-industry" placeholder="e.g., Technology" />
+                                    <label>Campaign Name:</label>
+                                    <input type="text" id="creator-campaign-name" placeholder="e.g., Q4 Marketing Push" />
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Target Industry:</label>
+                                        <input type="text" id="creator-industry" placeholder="e.g., Technology" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Content Type:</label>
+                                        <select id="creator-content-type">
+                                            <option value="post">Social Media Post</option>
+                                            <option value="email">Email Campaign</option>
+                                            <option value="article">Blog Article</option>
+                                            <option value="announcement">Announcement</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Content Type:</label>
-                                    <select id="creator-content-type">
-                                        <option value="post">Social Media Post</option>
-                                        <option value="email">Email Campaign</option>
-                                        <option value="article">Blog Article</option>
-                                        <option value="announcement">Announcement</option>
-                                    </select>
+                                    <label>Platform(s):</label>
+                                    <div class="platform-checkboxes">
+                                        <label><input type="checkbox" value="linkedin" /> LinkedIn</label>
+                                        <label><input type="checkbox" value="twitter" /> Twitter</label>
+                                        <label><input type="checkbox" value="instagram" /> Instagram</label>
+                                        <label><input type="checkbox" value="facebook" /> Facebook</label>
+                                    </div>
+                                </div>
+
+                                <!-- Media Picker -->
+                                <div class="form-group">
+                                    <label>📎 Add Media:</label>
+                                    <div class="media-picker">
+                                        <button type="button" class="btn btn-small" id="add-library-media">📚 From Library</button>
+                                        <button type="button" class="btn btn-small" id="add-upload-media">📤 Upload File</button>
+                                    </div>
+                                    <div id="selected-media" class="selected-media"></div>
+                                    <input type="file" id="media-upload-input" style="display:none" accept="image/*,video/*" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Message/Content:</label>
+                                    <textarea id="creator-content" placeholder="Write your content here..." rows="6"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Hashtags (comma-separated):</label>
+                                    <input type="text" id="creator-hashtags" placeholder="#marketing #social #campaign" />
+                                </div>
+                                <button id="creator-save-btn" class="btn btn-primary">💾 Save as Draft</button>
+                                <button id="creator-submit-btn" class="btn btn-success">📤 Submit for Approval</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Creator Content -->
+                    <div id="creator-image-tab" class="creator-tab-content">
+                        <div class="creator-section">
+                            <h3>🖼️ Create Image</h3>
+                            <div class="image-creator">
+                                <div class="image-canvas-container">
+                                    <canvas id="image-canvas" width="800" height="600"></canvas>
+                                </div>
+                                <div class="image-tools">
+                                    <div class="form-group">
+                                        <label>Background Color:</label>
+                                        <input type="color" id="image-bg-color" value="#ffffff" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Add Text:</label>
+                                        <input type="text" id="image-text" placeholder="Enter text..." />
+                                        <input type="color" id="image-text-color" value="#000000" />
+                                        <select id="image-font-size">
+                                            <option value="24">Small</option>
+                                            <option value="36">Medium</option>
+                                            <option value="48" selected>Large</option>
+                                            <option value="64">Extra Large</option>
+                                        </select>
+                                        <button type="button" class="btn btn-small" id="add-text-btn">Add Text</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Add Image:</label>
+                                        <input type="file" id="image-file" accept="image/*" />
+                                        <button type="button" class="btn btn-small" id="upload-image-btn">Upload Image</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-small" id="clear-canvas-btn">🔄 Clear Canvas</button>
+                                        <button type="button" class="btn btn-primary" id="save-image-btn">💾 Save Image</button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label>Platform(s):</label>
-                                <div class="platform-checkboxes">
-                                    <label><input type="checkbox" value="linkedin" /> LinkedIn</label>
-                                    <label><input type="checkbox" value="twitter" /> Twitter</label>
-                                    <label><input type="checkbox" value="instagram" /> Instagram</label>
-                                    <label><input type="checkbox" value="facebook" /> Facebook</label>
+                        </div>
+                    </div>
+
+                    <!-- Video Presentation Content -->
+                    <div id="creator-video-tab" class="creator-tab-content">
+                        <div class="creator-section">
+                            <h3>🎬 Create Video Presentation</h3>
+                            <div class="video-creator">
+                                <div class="form-group">
+                                    <label>Presentation Title:</label>
+                                    <input type="text" id="video-title" placeholder="e.g., Product Launch 2025" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Duration per slide (seconds):</label>
+                                    <input type="number" id="video-duration" value="3" min="1" max="10" />
+                                </div>
+
+                                <div class="slides-editor">
+                                    <h4>📽️ Slides</h4>
+                                    <div id="slides-list" class="slides-list">
+                                        <p class="loading">No slides yet. Add one below.</p>
+                                    </div>
+
+                                    <div class="add-slide">
+                                        <input type="text" id="slide-text" placeholder="Slide text..." />
+                                        <input type="file" id="slide-image" accept="image/*" />
+                                        <select id="slide-bg-color">
+                                            <option value="#ffffff">White</option>
+                                            <option value="#f0f0f0">Light Gray</option>
+                                            <option value="#1a1a1a">Dark</option>
+                                            <option value="#0066cc">Blue</option>
+                                            <option value="#00cc66">Green</option>
+                                        </select>
+                                        <button type="button" class="btn btn-small" id="add-slide-btn">➕ Add Slide</button>
+                                    </div>
+                                </div>
+
+                                <div class="video-actions">
+                                    <button type="button" class="btn btn-primary" id="preview-video-btn">▶️ Preview</button>
+                                    <button type="button" class="btn btn-success" id="create-video-btn">🎬 Create Presentation</button>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label>Message/Content:</label>
-                                <textarea id="creator-content" placeholder="Write your content here..." rows="6"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Hashtags (comma-separated):</label>
-                                <input type="text" id="creator-hashtags" placeholder="#marketing #social #campaign" />
-                            </div>
-                            <button id="creator-save-btn" class="btn btn-primary">💾 Save as Draft</button>
-                            <button id="creator-submit-btn" class="btn btn-success">📤 Submit for Approval</button>
                         </div>
                     </div>
 

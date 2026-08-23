@@ -4,6 +4,12 @@ class Dashboard {
     constructor() {
         this.currentModal = null;
         this.refreshInterval = 30000; // 30 seconds
+        this.currentViewMode = 'grid-large';
+        this.currentSort = 'date-desc';
+        this.selectedMedia = [];
+        this.slides = [];
+        this.imageCanvas = null;
+        this.imageCtx = null;
         this.init();
     }
 
@@ -51,6 +57,58 @@ class Dashboard {
 
         const creatorSubmitBtn = document.getElementById('creator-submit-btn');
         if (creatorSubmitBtn) creatorSubmitBtn.addEventListener('click', () => this.submitContent());
+
+        // Library sort and view
+        const libSort = document.getElementById('library-sort');
+        if (libSort) libSort.addEventListener('change', (e) => this.sortAndDisplayContent(e.target.value));
+
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.changeViewMode(e.target.dataset.view));
+        });
+
+        // Creator tabs
+        document.querySelectorAll('.creator-tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.switchCreatorTab(e.target.dataset.creatorTab));
+        });
+
+        // Media picker
+        const addLibraryMedia = document.getElementById('add-library-media');
+        if (addLibraryMedia) addLibraryMedia.addEventListener('click', () => this.openLibraryPicker());
+
+        const addUploadMedia = document.getElementById('add-upload-media');
+        if (addUploadMedia) addUploadMedia.addEventListener('click', () => document.getElementById('media-upload-input').click());
+
+        const mediaUploadInput = document.getElementById('media-upload-input');
+        if (mediaUploadInput) mediaUploadInput.addEventListener('change', (e) => this.handleMediaUpload(e));
+
+        // Image creator
+        const addTextBtn = document.getElementById('add-text-btn');
+        if (addTextBtn) addTextBtn.addEventListener('click', () => this.addTextToCanvas());
+
+        const uploadImageBtn = document.getElementById('upload-image-btn');
+        if (uploadImageBtn) uploadImageBtn.addEventListener('click', () => document.getElementById('image-file').click());
+
+        const imageFileInput = document.getElementById('image-file');
+        if (imageFileInput) imageFileInput.addEventListener('change', (e) => this.addImageToCanvas(e));
+
+        const clearCanvasBtn = document.getElementById('clear-canvas-btn');
+        if (clearCanvasBtn) clearCanvasBtn.addEventListener('click', () => this.clearCanvas());
+
+        const saveImageBtn = document.getElementById('save-image-btn');
+        if (saveImageBtn) saveImageBtn.addEventListener('click', () => this.saveImage());
+
+        // Video presentation
+        const addSlideBtn = document.getElementById('add-slide-btn');
+        if (addSlideBtn) addSlideBtn.addEventListener('click', () => this.addSlide());
+
+        const createVideoBtn = document.getElementById('create-video-btn');
+        if (createVideoBtn) createVideoBtn.addEventListener('click', () => this.createVideo());
+
+        const previewVideoBtn = document.getElementById('preview-video-btn');
+        if (previewVideoBtn) previewVideoBtn.addEventListener('click', () => this.previewVideo());
+
+        // Initialize image canvas
+        setTimeout(() => this.initImageCanvas(), 100);
     }
 
     switchTab(tab) {
@@ -391,8 +449,33 @@ class Dashboard {
             return;
         }
 
+        // Apply sorting
+        let sorted = [...items];
+        switch (this.currentSort) {
+            case 'date-asc':
+                sorted.sort((a, b) => new Date(a.uploaded_at) - new Date(b.uploaded_at));
+                break;
+            case 'date-desc':
+                sorted.sort((a, b) => new Date(b.uploaded_at) - new Date(a.uploaded_at));
+                break;
+            case 'name-asc':
+                sorted.sort((a, b) => a.title.localeCompare(b.title));
+                break;
+            case 'name-desc':
+                sorted.sort((a, b) => b.title.localeCompare(a.title));
+                break;
+            case 'size-asc':
+                sorted.sort((a, b) => a.file_size - b.file_size);
+                break;
+            case 'size-desc':
+                sorted.sort((a, b) => b.file_size - a.file_size);
+                break;
+        }
+
         grid.innerHTML = '';
-        items.forEach(item => {
+        grid.className = `content-grid ${this.currentViewMode}`;
+
+        sorted.forEach(item => {
             const card = document.createElement('div');
             card.className = 'content-card';
             const tags = item.tags && item.tags.length > 0
@@ -617,6 +700,213 @@ class Dashboard {
     escapeHtml(text) {
         const map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'};
         return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // Content Library - Sort and View Modes
+    async sortAndDisplayContent(sortType) {
+        this.currentSort = sortType;
+        await this.loadContentLibrary();
+    }
+
+    changeViewMode(viewMode) {
+        this.currentViewMode = viewMode;
+        document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[data-view="${viewMode}"]`).classList.add('active');
+
+        const grid = document.getElementById('content-grid');
+        grid.className = `content-grid ${viewMode}`;
+    }
+
+    // Creator Tab Switching
+    switchCreatorTab(tabName) {
+        document.querySelectorAll('.creator-tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[data-creator-tab="${tabName}"]`).classList.add('active');
+
+        document.querySelectorAll('.creator-tab-content').forEach(tab => tab.classList.remove('active'));
+        document.getElementById(`creator-${tabName}-tab`).classList.add('active');
+
+        if (tabName === 'image') {
+            setTimeout(() => this.initImageCanvas(), 50);
+        }
+    }
+
+    // Media Picker
+    openLibraryPicker() {
+        const html = prompt('Enter library items to add (comma-separated IDs or names):');
+        if (html) {
+            alert('📌 This would open a library picker dialog to select materials');
+        }
+    }
+
+    handleMediaUpload(e) {
+        const files = e.target.files;
+        for (let file of files) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const item = {
+                    id: Date.now() + Math.random(),
+                    type: file.type.startsWith('image') ? 'image' : 'video',
+                    name: file.name,
+                    src: event.target.result
+                };
+                this.selectedMedia.push(item);
+                this.displaySelectedMedia();
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    displaySelectedMedia() {
+        const container = document.getElementById('selected-media');
+        if (this.selectedMedia.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+        container.innerHTML = this.selectedMedia.map(media => `
+            <div class="media-item">
+                ${media.type === 'image'
+                    ? `<img src="${media.src}" alt="${media.name}">`
+                    : `<video src="${media.src}"></video>`
+                }
+                <button class="media-item-remove" onclick="dashboard.removeMedia('${media.id}')">✕</button>
+            </div>
+        `).join('');
+    }
+
+    removeMedia(id) {
+        this.selectedMedia = this.selectedMedia.filter(m => m.id != id);
+        this.displaySelectedMedia();
+    }
+
+    // Image Creator
+    initImageCanvas() {
+        const canvas = document.getElementById('image-canvas');
+        if (canvas) {
+            this.imageCanvas = canvas;
+            this.imageCtx = canvas.getContext('2d');
+            this.drawCanvas();
+        }
+    }
+
+    drawCanvas() {
+        if (!this.imageCanvas || !this.imageCtx) return;
+        const bgColor = document.getElementById('image-bg-color')?.value || '#ffffff';
+        this.imageCtx.fillStyle = bgColor;
+        this.imageCtx.fillRect(0, 0, this.imageCanvas.width, this.imageCanvas.height);
+    }
+
+    addTextToCanvas() {
+        if (!this.imageCtx) return;
+        const text = document.getElementById('image-text')?.value || 'Sample Text';
+        const color = document.getElementById('image-text-color')?.value || '#000000';
+        const size = document.getElementById('image-font-size')?.value || '48';
+
+        this.imageCtx.fillStyle = color;
+        this.imageCtx.font = `bold ${size}px Arial`;
+        this.imageCtx.textAlign = 'center';
+        this.imageCtx.fillText(text, this.imageCanvas.width / 2, this.imageCanvas.height / 2);
+
+        document.getElementById('image-text').value = '';
+    }
+
+    addImageToCanvas(e) {
+        if (!this.imageCtx || !e.target.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                this.imageCtx.drawImage(img, 100, 100, 200, 200);
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    }
+
+    clearCanvas() {
+        if (!this.imageCtx) return;
+        this.imageCtx.clearRect(0, 0, this.imageCanvas.width, this.imageCanvas.height);
+        this.drawCanvas();
+    }
+
+    saveImage() {
+        if (!this.imageCanvas) return;
+        const link = document.createElement('a');
+        link.download = `image-${Date.now()}.png`;
+        link.href = this.imageCanvas.toDataURL();
+        link.click();
+        alert('✅ Image saved to your Downloads folder!');
+    }
+
+    // Video Presentation
+    addSlide() {
+        const text = document.getElementById('slide-text')?.value || 'Slide Text';
+        const fileInput = document.getElementById('slide-image');
+        const bgColor = document.getElementById('slide-bg-color')?.value || '#ffffff';
+
+        const slide = {
+            id: Date.now(),
+            text,
+            bgColor,
+            image: null
+        };
+
+        if (fileInput?.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                slide.image = e.target.result;
+                this.slides.push(slide);
+                this.displaySlides();
+                document.getElementById('slide-text').value = '';
+                fileInput.value = '';
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            this.slides.push(slide);
+            this.displaySlides();
+            document.getElementById('slide-text').value = '';
+        }
+    }
+
+    displaySlides() {
+        const list = document.getElementById('slides-list');
+        if (this.slides.length === 0) {
+            list.innerHTML = '<p class="loading">No slides yet. Add one below.</p>';
+            return;
+        }
+
+        list.innerHTML = this.slides.map((slide, idx) => `
+            <div class="slide-item">
+                <div class="slide-preview" style="background: ${slide.bgColor};">
+                    ${slide.image ? '<img src="' + slide.image + '" style="width:100%; height:100%; object-fit:cover;">' : 'Slide ' + (idx + 1)}
+                </div>
+                <button class="slide-remove" onclick="dashboard.removeSlide(${slide.id})">✕</button>
+            </div>
+        `).join('');
+    }
+
+    removeSlide(id) {
+        this.slides = this.slides.filter(s => s.id !== id);
+        this.displaySlides();
+    }
+
+    previewVideo() {
+        if (this.slides.length === 0) {
+            alert('Please add at least one slide');
+            return;
+        }
+        alert(`▶️ Preview: ${this.slides.length} slides\nDuration: ${this.slides.length * (parseInt(document.getElementById('video-duration')?.value || 3))} seconds`);
+    }
+
+    createVideo() {
+        if (this.slides.length === 0) {
+            alert('Please add at least one slide');
+            return;
+        }
+        const title = document.getElementById('video-title')?.value || 'Presentation';
+        alert(`✅ Video presentation created!\n\nTitle: ${title}\nSlides: ${this.slides.length}\n\nThis would be converted to a video file ready to share.`);
+        this.slides = [];
+        this.displaySlides();
+        document.getElementById('video-title').value = '';
     }
 
     startAutoRefresh() {

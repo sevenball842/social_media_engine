@@ -661,6 +661,81 @@ textarea:focus {
     margin-bottom: var(--spacing-lg);
 }
 
+.library-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-sm);
+    flex-wrap: wrap;
+}
+
+.sort-controls, .view-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.sort-controls label, .view-controls label {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.sort-controls select {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
+}
+
+.view-btn {
+    padding: 6px 12px;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+}
+
+.view-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.view-btn.active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+}
+
+/* Content Grid View Modes */
+.content-grid.list-view {
+    grid-template-columns: 1fr;
+}
+
+.content-grid.list-view .content-card {
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.content-grid.grid-small {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+
+.content-grid.grid-large {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
 .upload-section h3, .library-section h3, .creator-section h3, .drafts-section h3 {
     margin-top: 0;
     color: var(--color-text-primary);
@@ -899,6 +974,234 @@ textarea:focus {
 .draft-actions .btn {
     padding: 6px 12px;
     font-size: 0.85rem;
+}
+
+/* Creator Tabs */
+.creator-tabs {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.creator-tab-btn {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.creator-tab-btn:hover {
+    color: var(--color-accent);
+}
+
+.creator-tab-btn.active {
+    border-bottom-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.creator-tab-content {
+    display: none;
+}
+
+.creator-tab-content.active {
+    display: block;
+}
+
+/* Media Picker */
+.media-picker {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.selected-media {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.media-item {
+    position: relative;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    aspect-ratio: 1;
+}
+
+.media-item img, .media-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.media-item-remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+/* Image Creator */
+.image-creator {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+.image-canvas-container {
+    background: var(--color-bg-primary);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+#image-canvas {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: var(--radius-sm);
+    background: white;
+    cursor: crosshair;
+}
+
+.image-tools {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.image-tools .form-group {
+    gap: var(--spacing-sm);
+}
+
+.image-tools input[type="text"],
+.image-tools input[type="color"],
+.image-tools select {
+    width: 100%;
+}
+
+.image-tools button {
+    width: 100%;
+}
+
+/* Video Presentation Creator */
+.video-creator {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.slides-editor {
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+}
+
+.slides-editor h4 {
+    margin-top: 0;
+    color: var(--color-text-primary);
+}
+
+.slides-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    min-height: 140px;
+}
+
+.slide-item {
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-sm);
+    background: var(--color-bg-secondary);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.slide-item:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+}
+
+.slide-item.active {
+    border-color: var(--color-accent);
+    background: var(--color-bg-secondary);
+}
+
+.slide-preview {
+    width: 100%;
+    height: 80px;
+    background: #ccc;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+.slide-remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: var(--color-status-red);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.add-slide {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: var(--spacing-md);
+    align-items: end;
+    padding: var(--spacing-md);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-sm);
+}
+
+.add-slide input, .add-slide select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-primary);
+}
+
+.video-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+}
+
+.video-actions .btn {
+    flex: 1;
+    max-width: 200px;
 }
 
 /* Responsive */
