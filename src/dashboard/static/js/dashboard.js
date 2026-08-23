@@ -34,6 +34,23 @@ class Dashboard {
         // Approval buttons
         document.getElementById('approve-btn').addEventListener('click', () => this.submitApproval('approve'));
         document.getElementById('reject-btn').addEventListener('click', () => this.submitApproval('reject'));
+
+        // Content library events
+        const uploadBtn = document.getElementById('upload-btn');
+        if (uploadBtn) uploadBtn.addEventListener('click', () => this.uploadContent());
+
+        const libSearch = document.getElementById('library-search');
+        if (libSearch) libSearch.addEventListener('keyup', (e) => this.searchContent(e.target.value));
+
+        const libFilter = document.getElementById('library-filter-category');
+        if (libFilter) libFilter.addEventListener('change', (e) => this.filterContentByCategory(e.target.value));
+
+        // Content creator events
+        const creatorSaveBtn = document.getElementById('creator-save-btn');
+        if (creatorSaveBtn) creatorSaveBtn.addEventListener('click', () => this.saveDraft());
+
+        const creatorSubmitBtn = document.getElementById('creator-submit-btn');
+        if (creatorSubmitBtn) creatorSubmitBtn.addEventListener('click', () => this.submitContent());
     }
 
     switchTab(tab) {
@@ -53,7 +70,8 @@ class Dashboard {
             this.loadIndustries(),
             this.loadPendingApprovals(),
             this.loadScheduledPosts(),
-            this.loadPerformance()
+            this.loadPerformance(),
+            this.loadContentLibrary()
         ]);
     }
 
@@ -348,7 +366,263 @@ class Dashboard {
         return num.toString();
     }
 
+    // Content Library Methods
+    async loadContentLibrary() {
+        try {
+            const response = await fetch('/api/content-library');
+            const data = await response.json();
+
+            // Update stats
+            document.getElementById('lib-total-items').textContent = data.stats.total_items;
+            document.getElementById('lib-total-size').textContent = data.stats.total_size_mb + ' MB';
+            document.getElementById('lib-industries').textContent = data.stats.industries.length;
+
+            // Display materials grid
+            this.displayContentGrid(data.items);
+        } catch (error) {
+            console.error('Error loading content library:', error);
+        }
+    }
+
+    displayContentGrid(items) {
+        const grid = document.getElementById('content-grid');
+        if (!items || items.length === 0) {
+            grid.innerHTML = '<p class="loading">No materials uploaded yet</p>';
+            return;
+        }
+
+        grid.innerHTML = '';
+        items.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'content-card';
+            const tags = item.tags && item.tags.length > 0
+                ? item.tags.map(t => `<span class="content-tag">${t}</span>`).join('')
+                : '';
+
+            card.innerHTML = `
+                <div class="content-card-header">
+                    <h3 class="content-card-title">${this.escapeHtml(item.title)}</h3>
+                    <span class="content-card-category">${item.category.toUpperCase()}</span>
+                </div>
+                <div class="content-card-info">
+                    <p>📅 ${new Date(item.uploaded_at).toLocaleDateString()}</p>
+                    <p>💾 ${(item.file_size / 1024).toFixed(1)} KB</p>
+                </div>
+                ${item.description ? `<p class="content-card-description">${this.escapeHtml(item.description)}</p>` : ''}
+                ${tags ? `<div class="content-card-tags">${tags}</div>` : ''}
+                <div class="content-card-actions">
+                    <button class="btn btn-small" onclick="dashboard.useContent('${item.id}')">📌 Use</button>
+                    <button class="btn btn-small btn-danger" onclick="dashboard.deleteContent('${item.id}')">🗑️ Delete</button>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    async uploadContent() {
+        const fileInput = document.getElementById('content-file');
+        const title = document.getElementById('content-title').value;
+        const category = document.getElementById('content-category').value;
+        const industry = document.getElementById('content-industry').value;
+        const description = document.getElementById('content-description').value;
+        const tags = document.getElementById('content-tags').value;
+
+        if (!fileInput.files.length) {
+            alert('Please select a file');
+            return;
+        }
+
+        if (!title) {
+            alert('Please enter a title');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('title', title);
+        formData.append('category', category);
+        formData.append('industry', industry);
+        formData.append('description', description);
+        formData.append('tags', tags);
+
+        try {
+            const response = await fetch('/api/content-library/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert('✅ Material uploaded successfully!');
+                // Clear form
+                document.getElementById('content-file').value = '';
+                document.getElementById('content-title').value = '';
+                document.getElementById('content-description').value = '';
+                document.getElementById('content-tags').value = '';
+                // Reload library
+                this.loadContentLibrary();
+            } else {
+                alert(`❌ Upload failed: ${data.error}`);
+            }
+        } catch (error) {
+            console.error('Error uploading content:', error);
+            alert('Error uploading content');
+        }
+    }
+
+    async searchContent(query) {
+        if (!query) {
+            this.loadContentLibrary();
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/content-library/search?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            this.displayContentGrid(data.items);
+        } catch (error) {
+            console.error('Error searching content:', error);
+        }
+    }
+
+    async filterContentByCategory(category) {
+        try {
+            const url = category
+                ? `/api/content-library?category=${encodeURIComponent(category)}`
+                : '/api/content-library';
+            const response = await fetch(url);
+            const data = await response.json();
+            this.displayContentGrid(data.items);
+        } catch (error) {
+            console.error('Error filtering content:', error);
+        }
+    }
+
+    async deleteContent(itemId) {
+        if (!confirm('Are you sure you want to delete this material?')) return;
+
+        try {
+            const response = await fetch(`/api/content-library/${itemId}`, {
+                method: 'DELETE'
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert('✅ Material deleted');
+                this.loadContentLibrary();
+            } else {
+                alert(`❌ ${data.error}`);
+            }
+        } catch (error) {
+            console.error('Error deleting content:', error);
+        }
+    }
+
+    useContent(itemId) {
+        alert(`📌 Material ${itemId} ready to use!\n\nThis would be used when scheduling posts to select pre-created materials.`);
+    }
+
+    // Content Creator Methods
+    async saveDraft() {
+        const campaign = document.getElementById('creator-campaign-name').value;
+        const content = document.getElementById('creator-content').value;
+
+        if (!campaign || !content) {
+            alert('Please fill in campaign name and content');
+            return;
+        }
+
+        // Save to localStorage for demo
+        const drafts = JSON.parse(localStorage.getItem('content-drafts') || '[]');
+        drafts.unshift({
+            id: Date.now(),
+            campaign,
+            content,
+            created: new Date().toLocaleString(),
+            status: 'draft'
+        });
+        localStorage.setItem('content-drafts', JSON.stringify(drafts.slice(0, 10)));
+
+        alert('✅ Draft saved successfully!');
+        this.loadDrafts();
+        document.getElementById('creator-campaign-name').value = '';
+        document.getElementById('creator-content').value = '';
+    }
+
+    async submitContent() {
+        const campaign = document.getElementById('creator-campaign-name').value;
+        const content = document.getElementById('creator-content').value;
+        const platforms = Array.from(document.querySelectorAll('.platform-checkboxes input:checked'))
+            .map(cb => cb.value);
+
+        if (!campaign || !content || platforms.length === 0) {
+            alert('Please fill in all required fields and select at least one platform');
+            return;
+        }
+
+        alert(`✅ Content submitted for approval!\n\nCampaign: ${campaign}\nPlatforms: ${platforms.join(', ')}\n\nThis will appear in the Approvals tab for your review.`);
+        document.getElementById('creator-campaign-name').value = '';
+        document.getElementById('creator-content').value = '';
+        document.querySelectorAll('.platform-checkboxes input').forEach(cb => cb.checked = false);
+    }
+
+    loadDrafts() {
+        const drafts = JSON.parse(localStorage.getItem('content-drafts') || '[]');
+        const list = document.getElementById('drafts-list');
+
+        if (drafts.length === 0) {
+            list.innerHTML = '<p class="loading">No drafts yet</p>';
+            return;
+        }
+
+        list.innerHTML = '';
+        drafts.forEach(draft => {
+            const card = document.createElement('div');
+            card.className = 'draft-card';
+            card.innerHTML = `
+                <div class="draft-info">
+                    <h4>${this.escapeHtml(draft.campaign)}</h4>
+                    <p>Created: ${draft.created}</p>
+                </div>
+                <div class="draft-actions">
+                    <button class="btn" onclick="dashboard.editDraft(${draft.id})">✏️ Edit</button>
+                    <button class="btn btn-danger" onclick="dashboard.deleteDraft(${draft.id})">🗑️ Delete</button>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    editDraft(id) {
+        const drafts = JSON.parse(localStorage.getItem('content-drafts') || '[]');
+        const draft = drafts.find(d => d.id === id);
+        if (draft) {
+            document.getElementById('creator-campaign-name').value = draft.campaign;
+            document.getElementById('creator-content').value = draft.content;
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('[data-tab="content-creator"]').classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById('content-creator-tab').classList.add('active');
+        }
+    }
+
+    deleteDraft(id) {
+        if (!confirm('Delete this draft?')) return;
+        let drafts = JSON.parse(localStorage.getItem('content-drafts') || '[]');
+        drafts = drafts.filter(d => d.id !== id);
+        localStorage.setItem('content-drafts', JSON.stringify(drafts));
+        this.loadDrafts();
+    }
+
+    escapeHtml(text) {
+        const map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'};
+        return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
     startAutoRefresh() {
+        // Load drafts initially
+        this.loadDrafts();
+
         setInterval(() => {
             this.loadData();
             this.updateTime();

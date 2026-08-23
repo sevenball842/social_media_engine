@@ -14,6 +14,7 @@ from status_calculator import StatusCalculator
 from approval_workflow import ApprovalWorkflow
 from scheduler import Scheduler
 from performance_tracker import PerformanceTracker
+from content_manager import ContentManager
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
@@ -228,6 +229,123 @@ def api_workflow_actions():
     except Exception as e:
         print(f"Error in api_workflow_actions: {e}")
         return jsonify({"success": False, "message": str(e)}), 500
+
+
+# ============================================================================
+# CONTENT LIBRARY ENDPOINTS
+# ============================================================================
+
+
+@app.route("/api/content-library")
+def api_content_library():
+    """Get content library with optional filtering"""
+    try:
+        manager = ContentManager()
+        category = request.args.get("category")
+        industry = request.args.get("industry")
+
+        items = manager.get_library(category=category, industry=industry)
+        stats = manager.get_stats()
+
+        return jsonify(
+            {
+                "items": items,
+                "total": len(items),
+                "stats": {
+                    "total_items": stats["total_items"],
+                    "by_category": stats["by_category"],
+                    "total_size_mb": stats["total_size_mb"],
+                    "industries": stats["industries"],
+                },
+            }
+        )
+    except Exception as e:
+        print(f"Error in api_content_library: {e}")
+        return jsonify({"error": str(e), "items": [], "total": 0}), 500
+
+
+@app.route("/api/content-library/upload", methods=["POST"])
+def api_content_upload():
+    """Upload new content to library"""
+    try:
+        if "file" not in request.files:
+            return jsonify({"success": False, "error": "No file provided"}), 400
+
+        file = request.files["file"]
+        title = request.form.get("title", file.filename)
+        category = request.form.get("category", "document")
+        industry = request.form.get("industry", "")
+        description = request.form.get("description", "")
+        tags = request.form.get("tags", "").split(",")
+        tags = [t.strip() for t in tags if t.strip()]
+
+        # Save file temporarily
+        import tempfile
+
+        with tempfile.NamedTemporaryFile(
+            suffix=os.path.splitext(file.filename)[1], delete=False
+        ) as tmp:
+            file.save(tmp.name)
+            tmp_path = tmp.name
+
+        # Upload to manager
+        manager = ContentManager()
+        result = manager.upload_material(
+            file_path=tmp_path,
+            title=title,
+            category=category,
+            industry=industry,
+            description=description,
+            tags=tags,
+        )
+
+        # Clean up temp file
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
+        if result["success"]:
+            return jsonify({"success": True, "item": result["item"]})
+        else:
+            return jsonify({"success": False, "error": result["error"]}), 400
+
+    except Exception as e:
+        print(f"Error in api_content_upload: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/content-library/<item_id>", methods=["DELETE"])
+def api_content_delete(item_id):
+    """Delete content from library"""
+    try:
+        manager = ContentManager()
+        success = manager.delete_material(item_id)
+
+        if success:
+            return jsonify({"success": True, "message": "Content deleted"})
+        else:
+            return jsonify({"success": False, "error": "Content not found"}), 404
+
+    except Exception as e:
+        print(f"Error in api_content_delete: {e}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/content-library/search")
+def api_content_search():
+    """Search content library"""
+    try:
+        query = request.args.get("q", "")
+        if not query:
+            return jsonify({"items": [], "total": 0})
+
+        manager = ContentManager()
+        items = manager.search_library(query)
+
+        return jsonify({"items": items, "total": len(items)})
+
+    except Exception as e:
+        print(f"Error in api_content_search: {e}")
+        return jsonify({"error": str(e), "items": [], "total": 0}), 500
 
 
 # ============================================================================

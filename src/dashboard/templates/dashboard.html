@@ -27,6 +27,8 @@
             <button class="nav-btn" data-tab="approvals">✅ Approvals</button>
             <button class="nav-btn" data-tab="scheduling">📅 Scheduling</button>
             <button class="nav-btn" data-tab="performance">📈 Performance</button>
+            <button class="nav-btn" data-tab="content-library">📂 Content Library</button>
+            <button class="nav-btn" data-tab="content-creator">✏️ Content Creator</button>
         </nav>
 
         <!-- Main Content -->
@@ -169,6 +171,148 @@
                             <tr><td colspan="4" class="loading">Loading...</td></tr>
                         </tbody>
                     </table>
+                </div>
+            </section>
+
+            <!-- Content Library Tab -->
+            <section id="content-library-tab" class="tab-content">
+                <div class="section">
+                    <h2>Content Library</h2>
+
+                    <!-- Upload Section -->
+                    <div class="upload-section">
+                        <h3>📤 Upload New Material</h3>
+                        <div class="upload-form">
+                            <div class="form-group">
+                                <label>File:</label>
+                                <input type="file" id="content-file" />
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Title:</label>
+                                    <input type="text" id="content-title" placeholder="Material title" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Category:</label>
+                                    <select id="content-category">
+                                        <option value="video">Video</option>
+                                        <option value="image">Image</option>
+                                        <option value="document">Document</option>
+                                        <option value="template">Template</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Industry:</label>
+                                    <input type="text" id="content-industry" placeholder="Target industry" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Description:</label>
+                                <textarea id="content-description" placeholder="Describe this material..." rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Tags (comma-separated):</label>
+                                <input type="text" id="content-tags" placeholder="e.g., marketing, social, promotional" />
+                            </div>
+                            <button id="upload-btn" class="btn btn-primary">📤 Upload</button>
+                        </div>
+                    </div>
+
+                    <!-- Library Search & Stats -->
+                    <div class="library-section">
+                        <h3>📚 Your Materials</h3>
+                        <div class="library-controls">
+                            <input type="text" id="library-search" placeholder="Search materials..." />
+                            <select id="library-filter-category">
+                                <option value="">All Categories</option>
+                                <option value="video">Video</option>
+                                <option value="image">Image</option>
+                                <option value="document">Document</option>
+                                <option value="template">Template</option>
+                            </select>
+                        </div>
+
+                        <!-- Library Stats -->
+                        <div class="library-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Total Items:</span>
+                                <span class="stat-value" id="lib-total-items">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Total Size:</span>
+                                <span class="stat-value" id="lib-total-size">0 MB</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Industries:</span>
+                                <span class="stat-value" id="lib-industries">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Materials Grid -->
+                        <div id="content-grid" class="content-grid">
+                            <p class="loading">Loading materials...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content Creator Tab -->
+            <section id="content-creator-tab" class="tab-content">
+                <div class="section">
+                    <h2>Content Creator</h2>
+
+                    <!-- Content Creation Form -->
+                    <div class="creator-section">
+                        <h3>✏️ Create New Campaign Content</h3>
+                        <div class="creator-form">
+                            <div class="form-group">
+                                <label>Campaign Name:</label>
+                                <input type="text" id="creator-campaign-name" placeholder="e.g., Q4 Marketing Push" />
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Target Industry:</label>
+                                    <input type="text" id="creator-industry" placeholder="e.g., Technology" />
+                                </div>
+                                <div class="form-group">
+                                    <label>Content Type:</label>
+                                    <select id="creator-content-type">
+                                        <option value="post">Social Media Post</option>
+                                        <option value="email">Email Campaign</option>
+                                        <option value="article">Blog Article</option>
+                                        <option value="announcement">Announcement</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Platform(s):</label>
+                                <div class="platform-checkboxes">
+                                    <label><input type="checkbox" value="linkedin" /> LinkedIn</label>
+                                    <label><input type="checkbox" value="twitter" /> Twitter</label>
+                                    <label><input type="checkbox" value="instagram" /> Instagram</label>
+                                    <label><input type="checkbox" value="facebook" /> Facebook</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Message/Content:</label>
+                                <textarea id="creator-content" placeholder="Write your content here..." rows="6"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Hashtags (comma-separated):</label>
+                                <input type="text" id="creator-hashtags" placeholder="#marketing #social #campaign" />
+                            </div>
+                            <button id="creator-save-btn" class="btn btn-primary">💾 Save as Draft</button>
+                            <button id="creator-submit-btn" class="btn btn-success">📤 Submit for Approval</button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Drafts -->
+                    <div class="drafts-section">
+                        <h3>📋 Recent Drafts</h3>
+                        <div id="drafts-list" class="drafts-list">
+                            <p class="loading">No drafts yet</p>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>
